@@ -1,0 +1,50 @@
+#logo
+{
+    height: 50px;
+}
+
+#profile
+{
+    height: 50px;
+}
+
+.heading
+{
+    text-align: center;
+}
+
+/* General Table Styling */
+.table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    font-family: 'Arial', sans-serif;
+    border: 2px solid #4CAF50; /* Add border to the table */
+  }
+
+  /* Header Styling */
+  .table thead {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  /* Styling for table cells */
+  .table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd; /* Add border to cells */
+  }
+
+  /* Row Styling */
+  .table tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+  }
+
+  .table tbody tr:hover {
+    background-color: #ddd;
+  }
+
+  /* Responsive Styling */
+  .container {
+    padding: 20px;
+  }
