@@ -5,8 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cruduser extends Model
+class Student extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function Class()
+    {
+        return $this->belongsTo(Studentclass::class, 'class_id', 'class_id');
+    }
 }

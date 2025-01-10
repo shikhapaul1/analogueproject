@@ -11,43 +11,50 @@
    
 
 
-      <div class="heading">
-        <h1 class="text-center">User Data</h1>
-      </div>
       <div class="container mt-5">
-  <!-- Add User Button -->
-  <div class="d-flex justify-content-end mb-3">
-    <a href="{{ route('add_user') }}" class="btn btn-primary">+ Add User</a>
+      <div class="d-flex justify-content-between mb-3">
+  <!-- Add Student Button -->
+  <div>
+  <a href="{{ route('class.add') }}" class="btn btn-primary">+ Add Class</a>
   </div>
+  
+  <!-- Add Class Button -->
+  <div>
+    <a href="{{route('index')}}" class="btn btn-primary">View Student</a>
+  </div>
+</div>
+  <!-- Add User Button -->
+
 
   <!-- User Table -->
   <div class="card shadow-lg">
     <div class="card-header bg-primary text-white text-center">
-      <h5>User List</h5>
+      <h5>Class List</h5>
     </div>
     <div class="card-body">
       <table class="table table-striped table-hover">
         <thead class="table-dark">
           <tr>
             <th scope="col">Sl. No.</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">Mobile Number</th>
-            <th scope="col">Email ID</th>
+            <th scope="col">Name</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          @foreach($getdata as $data)
+            @foreach($class as $classes)
           <tr>
-            <td>{{ $loop->iteration }}</td>
-            <td>{{ $data->first_name }}</td>
-            <td>{{ $data->last_name }}</td>
-            <td>{{ $data->mobile_number }}</td>
-            <td>{{ $data->email_id }}</td>
+            <td>{{$loop->iteration}}</td>
+            <td>{{$classes->name}}</td>
             <td>
-              <a href="{{ route('edit_user', [$data->id]) }}" class="btn btn-success btn-sm ">Edit</a>
-              <a href="{{ route('delete', [$data->id]) }}" class="btn btn-danger btn-sm">Delete</a>
+              <a href="{{route('edit_class', [$classes->class_id])}}" class="btn btn-success btn-sm ">Edit</a>
+              <!-- Example using Bootstrap for styling -->
+              <form action="{{route('class.destroy', $classes->class_id)}}" method="POST" style="display:inline;">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this class?')">
+                      Delete
+                  </button>
+              </form>
             </td>
           </tr>
           @endforeach
