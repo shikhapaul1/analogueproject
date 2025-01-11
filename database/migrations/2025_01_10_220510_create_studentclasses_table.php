@@ -14,8 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('studentclasses', function (Blueprint $table) {
-            $table->string('class_id')->primary(); // Make 'class_id' the primary key
+            $table->id();
             $table->string('name');
+            $table->string('email');
+            $table->string('address');
+            $table->numeric('class_id');
+            $table->string('image');
             $table->timestamps();
         });
     }

@@ -1,15 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
 use App\Models\Studentclass;
+use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
     public function index()
     {
-        $class = Studentclass::all();
+        $classes = Studentclass::all();
 
         return view('Class.index', get_defined_vars());
     }
@@ -19,47 +18,45 @@ class ClassController extends Controller
         return view('Class.add');
     }
 
-    public function add_class(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            "name" => 'required',
         ]);
-       
-        // Create a new student instance
-        $add = new Studentclass;
-        $add->name = $request->name;
-        $add->save();
-        
-        return redirect()->route('class.index')->with('success', 'Successfully Added');
+
+        $addclass = new Studentclass;
+        $addclass->name = $request->name;
+        $addclass->save();
+
+        return redirect()->route('class.index')->with('success', 'Class Added successfully');
     }
 
-    public function edit_class($id)
+    public function edit($id)
     {
         $data = Studentclass::find($id);
 
         return view('Class.edit', get_defined_vars());
     }
 
-    public function edit_class_post(Request $request)
+    public function edit_post(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            "name" => 'required',
         ]);
-       
-        // Create a new student instance
-        $add = Studentclass::where('class_id', $request->id)->first();
-        $add->name = $request->name;
-        $add->save();
+
+        $addclass = Studentclass::find($request->id);
+        $addclass->name = $request->name;
+        $addclass->save();
 
         return redirect()->route('class.index')->with('success', 'Class Edited successfully');
-
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
-        $student = Studentclass::findOrFail($id);
-        $student->delete();
-    
-        return redirect()->route('class.index')->with('success', 'Class deleted successfully');
+        $addclass = Studentclass::findOrFail($id);
+        $addclass->delete();
+
+        return redirect()->route('class.index')->with('success', 'Class Deleted successfully');
+
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Studentclass extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'class_id';
     protected $guarded = [];
+    protected $primaryKey = 'class_id';
+    public $incrementing = true;  // For non-incrementing primary keys (e.g., UUIDs)
 }

@@ -14,12 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->id();
+            $table->increments('class_id');  // Custom primary key (integer)
             $table->string('name');
-            $table->string('email');
-            $table->string('address');
-            $table->string('class_id');
-            $table->string('image');
             $table->timestamps();
         });
     }

@@ -3,27 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crud</title>
+    <title>Student Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     </head>
 <body>
    
 
-
       <div class="container mt-5">
       <div class="d-flex justify-content-between mb-3">
-  <!-- Add Student Button -->
-  <div>
-  <a href="{{ route('class.add') }}" class="btn btn-primary">+ Add Class</a>
-  </div>
-  
-  <!-- Add Class Button -->
-  <div>
-    <a href="{{route('index')}}" class="btn btn-primary">View Student</a>
-  </div>
+    <!-- Left Side Button -->
+    <a href="{{route('student.index')}}" class="btn btn-primary">Student</a>
+
+    <!-- Right Side Button -->
+    <a href="{{ route('class.add') }}" class="btn btn-primary">+ Add Class</a>
 </div>
-  <!-- Add User Button -->
 
 
   <!-- User Table -->
@@ -36,26 +30,31 @@
         <thead class="table-dark">
           <tr>
             <th scope="col">Sl. No.</th>
-            <th scope="col">Name</th>
+            <th scope="col"> Name</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-            @foreach($class as $classes)
+            @foreach($classes as $class)
           <tr>
             <td>{{$loop->iteration}}</td>
-            <td>{{$classes->name}}</td>
-            <td>
-              <a href="{{route('edit_class', [$classes->class_id])}}" class="btn btn-success btn-sm ">Edit</a>
-              <!-- Example using Bootstrap for styling -->
-              <form action="{{route('class.destroy', $classes->class_id)}}" method="POST" style="display:inline;">
-                  @csrf
-                  @method('DELETE')
-                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this class?')">
-                      Delete
-                  </button>
-              </form>
-            </td>
+            <td>{{$class->name}}</td>
+            <td class="text-center">
+    <!-- Edit Button with Tooltip -->
+    <a href="{{ route('class.edit', $class->class_id) }}" class="btn btn-success btn-sm mr-2" data-toggle="tooltip" title="Edit Class">
+        <i class="fas fa-edit"></i> Edit
+    </a>
+    
+    <!-- Delete Button with Tooltip -->
+    <form action="{{ route('class.delete', $class->class_id) }}" method="POST" class="d-inline-block" onsubmit="return confirmDelete()">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger btn-sm" >
+            <i class="fas fa-trash-alt"></i> Delete
+        </button>
+    </form>
+</td>
+
           </tr>
           @endforeach
         </tbody>
@@ -73,6 +72,11 @@
     @elseif(session('error'))
         toastr.error("{{ session('error') }}");
     @endif
+</script>
+<script>
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this class?");
+    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </html>

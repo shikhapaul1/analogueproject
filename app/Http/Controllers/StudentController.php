@@ -11,96 +11,122 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::with('Class')->get();
-        
+        $students = Student::with('class')->get();
         return view('Student.index', get_defined_vars());
     }
 
-    public function add_student()
+    public function add()
     {
-        $classes = Studentclass::get();
+        $class = Studentclass::all();
 
         return view('Student.add_student', get_defined_vars());
     }
 
-    public function student_post(Request $request)
+    public function store(Request $request)
     {
+        // Validate the incoming request
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students,email|max:255', // Ensure unique email in the students table
-            'Address' => 'required|string|max:255',
-            'class' => 'required|string|max:255', // Ensure 'class' is a string and has a max length
-            'image' => 'nullable|image|mimes:jpg,png|max:2048', // Allow optional image upload with size and type validation
+            "name" => 'required',
+            "email" => 'required|email',
+            "address" => 'required|string|max:255',
+            "class" => 'required',
+            "image" => 'required|mimes:jpg,png',  // Validate image type and size
         ]);
-       
-        // Create a new student instance
-        $add = new Student;
-        $add->name = $request->name;
-        $add->email = $request->email;
-        $add->address = $request->Address;
-        $add->class_id = $request->class;
-        
+
+        // Handle the validated data (e.g., store it in the database)
         if ($request->hasFile('image')) {
+            // Process the uploaded image
             $image = $request->file('image');
-            $imageName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->move(public_path('uploads'), $imageName);
-            $add->image = 'uploads/' . $imageName;
+
+            // Generate a unique file name for the image (optional)
+            $imageName = Str::random(40) . '.' . $image->getClientOriginalExtension();
+
+            // Store the image in the public folder (in a sub-folder 'images')
+            $imagePath = $image->move(public_path('uploads'), $imageName); 
+
+            // Example: Save the data to the database
+            $student = new Student();
+            $student->name = $request->name;
+            $student->email = $request->email;
+            $student->address = $request->address;
+            $student->class_id = $request->class;
+            $student->image = 'uploads/'.$imageName; // Save relative path to the image
+            $student->save();
         }
 
-        $add->save();
-        
-        return redirect()->route('index')->with('success', 'Successfully Added');
+        // Redirect with a success message
+        return redirect()->route('student.index')->with('success', 'Student created successfully!');
     }
 
-    public function edit_student($id)
+    public function edit($id)
     {
-        $data = Student::find($id);
-        $classes = Studentclass::get();
+        $student = Student::with('class')->find($id);
+        $class = Studentclass::all();
+
 
         return view('Student.edit_student', get_defined_vars());
     }
 
-    public function edit_student_post(Request $request)
+    public function edit_store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|', // Ensure unique email in the students table
-            'Address' => 'required|string|max:255',
-            'class' => 'required|string|max:255', // Ensure 'class' is a string and has a max length
-            'image' => 'nullable|image|mimes:jpg,png|max:2048', // Allow optional image upload with size and type validation
+        //  Validate the incoming request
+         $validated = $request->validate([
+            "name" => 'required',
+            "email" => 'required|email',
+            "address" => 'required|string|max:255',
+            "class_id" => 'required',
         ]);
-        
-        // Create a new student instance
-        $add = Student::find($request->id);
-        $add->name = $request->name;
-        $add->email = $request->email;
-        $add->address = $request->Address;
-        $add->class_id = $request->class;
-        
+        // dd($request->all());
+
+       // Find the student by ID
+    $student = Student::find($request->id);
+
+    if ($student) {
+        // If an image is uploaded, handle the image upload
         if ($request->hasFile('image')) {
+            // Get the image file
             $image = $request->file('image');
-            $imageName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->move(public_path('uploads'), $imageName);
-            $add->image = 'uploads/' . $imageName;
+
+            // Generate a unique image name using random string + extension
+            $imageName = Str::random(40) . '.' . $image->getClientOriginalExtension();
+
+            // Move the image to the "uploads" folder
+            $image->move(public_path('uploads'), $imageName);
+
+            // Save the relative path of the image
+            $student->image = 'uploads/' . $imageName;
         }
 
-        $add->save();
-        
-        return redirect()->route('index')->with('success', 'Successfully Edited');
+        // Update student data (if no image uploaded, image field remains unchanged)
+        $student->name = $request->name;
+        $student->email = $request->email;
+        $student->address = $request->address;
+        $student->class_id = $request->class_id;
+
+        // Save the updated student record
+        $student->save();
+
+        // Optionally, you can redirect or return a success message
+        return redirect()->route('student.index')->with('success', 'Student updated successfully!');
+    } else {
+        // Handle case where student is not found (optional)
+        return redirect()->back()->with('error', 'Student not found');
+    }
     }
 
-    public function show($id)
+    public function view_store($id)
     {
-        $data = Student::with('Class')->find($id);
+        $student = Student::with('class')->find($id);
 
-        return view('Student.view', get_defined_vars());
+        return view('Student.view_student', get_defined_vars());
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
-        $student = Student::findOrFail($id);
-        $student->delete();
-    
-        return redirect()->route('index')->with('success', 'Student deleted successfully');
+        $delete = Student::findOrFail($id);
+        $delete->delete();
+
+        return redirect()->route('student.index')->with('success', 'Class Deleted successfully');
+
     }
 }
